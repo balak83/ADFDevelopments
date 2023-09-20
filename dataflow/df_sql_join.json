@@ -1,0 +1,67 @@
+{
+	"name": "df_sql_join",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_employee",
+						"type": "DatasetReference"
+					},
+					"name": "tblemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_dept",
+						"type": "DatasetReference"
+					},
+					"name": "tblDept"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_json_dest",
+						"type": "DatasetReference"
+					},
+					"name": "jsonoutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Employee ID} as string,",
+				"          Email as string,",
+				"          Salary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> tblemp",
+				"source(output(",
+				"          {Employee ID} as string,",
+				"          Department as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> tblDept",
+				"tblemp, tblDept join(tblemp@{Employee ID} == tblDept@{Employee ID},",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> jsonoutput"
+			]
+		}
+	}
+}

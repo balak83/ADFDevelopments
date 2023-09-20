@@ -1,0 +1,18 @@
+{
+	"name": "ds_tumbling_binary_dest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Destination",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "destination"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

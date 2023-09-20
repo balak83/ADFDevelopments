@@ -1,0 +1,62 @@
+{
+	"name": "df_derievedcol_select",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_employee",
+						"type": "DatasetReference"
+					},
+					"name": "sqlsource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_json_dest",
+						"type": "DatasetReference"
+					},
+					"name": "derievedcolumnjson"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Employee ID} as string,",
+				"          Email as string,",
+				"          Salary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> sqlsource",
+				"sqlsource derive(Email = upper(Email),",
+				"          salary_deduction = 5000,",
+				"          salary_after_deduction = Salary-5000) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          {Employee ID},",
+				"          Email,",
+				"          Salary,",
+				"          salary_after_deduction",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> derievedcolumnjson"
+			]
+		}
+	}
+}

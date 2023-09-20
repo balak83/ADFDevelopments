@@ -1,0 +1,158 @@
+{
+	"name": "SCD_Type2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_csv_emp",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_SCDT2_Src",
+						"type": "DatasetReference"
+					},
+					"name": "lookup"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_SCDT2_Src",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_SCDT2_Src",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "insert"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "Update"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          empId as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          Email as string,",
+				"          Address as string,",
+				"          City as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source",
+				"source(output(",
+				"          empId as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          Email as string,",
+				"          Address as string,",
+				"          City as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'select * from [dbo].[tblEmployee_SCDT2] where IsActive = 1',",
+				"     format: 'query') ~> lookup",
+				"source, lookup lookup(source@empId == lookup@empId,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 filter(isNull(lookup@empId) || (source@LastName!=lookup@LastName) || (source@FirstName!=lookup@FirstName) ||(source@Email!=lookup@Email) || (source@Address!=lookup@Address) ||(source@City!=lookup@City)) ~> insert",
+				"insert derive(IsActive = 1) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          empId = source@empId,",
+				"          LastName = source@LastName,",
+				"          FirstName = source@FirstName,",
+				"          Email = source@Email,",
+				"          Address = source@Address,",
+				"          City = source@City,",
+				"          IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"lookup1 filter((!isNull(lookup@empId)) && ((source@LastName!=lookup@LastName) || (source@FirstName!=lookup@FirstName) || (source@Email!=lookup@Email) || (source@Address!=lookup@Address) || (source@City!=lookup@City))) ~> Update",
+				"Update derive(IsActive = 0) ~> derivedColumn2",
+				"derivedColumn2 select(mapColumn(",
+				"          empId = lookup@empId,",
+				"          LastName = lookup@LastName,",
+				"          FirstName = lookup@FirstName,",
+				"          Email = lookup@Email,",
+				"          Address = lookup@Address,",
+				"          City = lookup@City,",
+				"          IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 alterRow(updateIf(1==1)) ~> alterRow1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          empId as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          Email as string,",
+				"          Address as string,",
+				"          City as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          empId as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          Email as string,",
+				"          Address as string,",
+				"          City as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['empId','LastName'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2"
+			]
+		}
+	}
+}

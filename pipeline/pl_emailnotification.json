@@ -1,0 +1,32 @@
+{
+	"name": "pl_emailnotification",
+	"properties": {
+		"activities": [
+			{
+				"name": "Email_notification",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-12.centralindia.logic.azure.com:443/workflows/6565baf82d5141a393399f268d638519/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=VPU3YAK7qG6Mt0TS1ohxU8BlOg7rmAzqGUwa5tOIAYQ",
+					"method": "POST",
+					"body": {
+						"To": "saranya.vsp@gmail.com",
+						"Subject": "Email notification from ADF",
+						"Body": "This is email notification from Azure Data Factory"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-06T17:09:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

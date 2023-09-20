@@ -1,0 +1,110 @@
+{
+	"name": "pl_Fullload_dynamicschema_dynamictable_Selectedcolumn",
+	"properties": {
+		"activities": [
+			{
+				"name": "iterate_schema_table",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('table_Names')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Move_Data",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "@concat('SELECT ',item().source_Column,' FROM ',item().source_Schema,'.',item().source_Table)",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"preCopyScript": {
+										"value": "@{concat('TRUNCATE TABLE ',item().dest_Schema,'.',item().dest_Table)}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_DataLoad_Src2",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_DataLoad_dst1",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema_Name": {
+											"value": "@item().dest_Schema",
+											"type": "Expression"
+										},
+										"table_Name": {
+											"value": "@item().dest_Table",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"table_Names": {
+				"type": "Array",
+				"defaultValue": [
+					{
+						"source_Schema": "dbo",
+						"source_Table": "tblEmp",
+						"source_Column": "[Employee ID],Email,Salary",
+						"dest_Schema": "staging",
+						"dest_Table": "tblEmp"
+					},
+					{
+						"source_Schema": "dbo",
+						"source_Table": "tblDept",
+						"source_Column": "[Employee ID],Department",
+						"dest_Schema": "staging",
+						"dest_Table": "tblDept"
+					}
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-09-15T16:31:50Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

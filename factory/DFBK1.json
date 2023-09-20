@@ -1,0 +1,9 @@
+{
+	"name": "DFBK1",
+	"location": "eastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "69bfa977-066f-452e-a548-3e2352c89da3",
+		"tenantId": "26442fa1-224e-4ec6-8c03-71843eae7e30"
+	}
+}

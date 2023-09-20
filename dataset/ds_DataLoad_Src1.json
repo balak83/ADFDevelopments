@@ -1,0 +1,31 @@
+{
+	"name": "ds_DataLoad_Src1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SqlServer",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"schema_Name": {
+				"type": "string"
+			},
+			"table_Name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().schema_Name",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().table_Name",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

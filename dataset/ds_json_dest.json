@@ -1,0 +1,19 @@
+{
+	"name": "ds_json_dest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Destination",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "destination"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

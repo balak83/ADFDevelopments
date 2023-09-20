@@ -1,0 +1,228 @@
+{
+	"name": "pl_Log",
+	"properties": {
+		"activities": [
+			{
+				"name": "StartLog",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[dbo].[SavePipelineLog]",
+						"storedProcedureParameters": {
+							"DFName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().DataFactory",
+									"type": "Expression"
+								}
+							},
+							"Id": {
+								"type": "Int32",
+								"value": "0"
+							},
+							"PLName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							"PLStatus": {
+								"type": "String",
+								"value": "Start"
+							},
+							"Runid": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_dept",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "SuccessLog",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "exepl_areacalc",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[dbo].[SavePipelineLog]",
+						"storedProcedureParameters": {
+							"DFName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().DataFactory",
+									"type": "Expression"
+								}
+							},
+							"Id": {
+								"type": "Int32",
+								"value": {
+									"value": "@int(activity('StartLog').output.value[0].Id)",
+									"type": "Expression"
+								}
+							},
+							"PLName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							"PLStatus": {
+								"type": "String",
+								"value": "Success"
+							},
+							"Runid": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_dept",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FailureLog",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "exepl_areacalc",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[dbo].[SavePipelineLog]",
+						"storedProcedureParameters": {
+							"DFName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().DataFactory",
+									"type": "Expression"
+								}
+							},
+							"ErrorMessage": {
+								"type": "String",
+								"value": {
+									"value": "@activity('exepl_areacalc').Error.message",
+									"type": "Expression"
+								}
+							},
+							"Id": {
+								"type": "Int32",
+								"value": {
+									"value": "@int(activity('StartLog').output.value[0].Id)",
+									"type": "Expression"
+								}
+							},
+							"PLName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							"PLStatus": {
+								"type": "String",
+								"value": "Failed"
+							},
+							"Runid": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_dept",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "exepl_areacalc",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "StartLog",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_areacalculation",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-05T17:05:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

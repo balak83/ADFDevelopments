@@ -1,0 +1,22 @@
+{
+	"name": "ds_param_sql_dest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SqlServer",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ds_dest_table": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tblDept"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

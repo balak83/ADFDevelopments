@@ -1,0 +1,179 @@
+{
+	"name": "pl_Variable",
+	"properties": {
+		"description": "(a+b)2 = a2+b2+2ab",
+		"activities": [
+			{
+				"name": "var b",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "b",
+					"value": 10
+				}
+			},
+			{
+				"name": "Var a",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "a",
+					"value": 5
+				}
+			},
+			{
+				"name": "var c",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Var a",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "var b",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "c",
+					"value": {
+						"value": "@add(mul(variables('a'),variables('a')), mul(variables('b'),variables('b')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "var d",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Var a",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "var b",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "d",
+					"value": {
+						"value": "@mul(2,mul(variables('a'),variables('b')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "var result",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "var c",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "var d",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "result",
+					"value": {
+						"value": "@add(variables('c'),variables('d'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "var result1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "var b",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Var a",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "result",
+					"value": {
+						"value": "@add(add(mul(variables('a'),variables('a')), mul(variables('b'),variables('b'))),mul(2,mul(variables('a'),variables('b'))))",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"a": {
+				"type": "Integer"
+			},
+			"b": {
+				"type": "Integer"
+			},
+			"c": {
+				"type": "Integer"
+			},
+			"d": {
+				"type": "Integer"
+			},
+			"result": {
+				"type": "Integer"
+			},
+			"result1": {
+				"type": "Integer"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-08-21T18:00:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

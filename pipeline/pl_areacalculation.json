@@ -1,0 +1,81 @@
+{
+	"name": "pl_areacalculation",
+	"properties": {
+		"activities": [
+			{
+				"name": "breth",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "breth",
+					"value": 5
+				}
+			},
+			{
+				"name": "length",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "length",
+					"value": "b"
+				}
+			},
+			{
+				"name": "area",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "breth",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "length",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "area",
+					"value": {
+						"value": "@mul(variables('breth'),variables('length'))",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"breth": {
+				"type": "Integer",
+				"defaultValue": 6
+			},
+			"length": {
+				"type": "Integer",
+				"defaultValue": 5
+			},
+			"area": {
+				"type": "Integer"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-09-05T17:05:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

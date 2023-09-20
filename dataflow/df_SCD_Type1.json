@@ -1,0 +1,64 @@
+{
+	"name": "df_SCD_Type1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_increment_load_emp_src",
+						"type": "DatasetReference"
+					},
+					"name": "empstaging"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_increment_load_emp_dest",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          empId as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          Email as string,",
+				"          Address as string,",
+				"          City as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> empstaging",
+				"empstaging alterRow(upsertIf(1==1)) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          empId as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          Email as string,",
+				"          Address as string,",
+				"          City as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['empId'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

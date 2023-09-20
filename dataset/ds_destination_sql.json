@@ -1,0 +1,34 @@
+{
+	"name": "ds_destination_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SqlServer",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "Employee ID",
+				"type": "varchar"
+			},
+			{
+				"name": "Full Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Job Title",
+				"type": "varchar"
+			},
+			{
+				"name": "Department",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Employee"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

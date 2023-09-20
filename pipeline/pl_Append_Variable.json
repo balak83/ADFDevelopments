@@ -1,0 +1,85 @@
+{
+	"name": "pl_Append_Variable",
+	"properties": {
+		"activities": [
+			{
+				"name": "Append",
+				"type": "AppendVariable",
+				"dependsOn": [
+					{
+						"activity": "input",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Marks",
+					"value": {
+						"value": "@variables('input')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "input",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "input",
+					"value": 6
+				}
+			},
+			{
+				"name": "output",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Append",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "output",
+					"value": {
+						"value": "@variables('Marks')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"input": {
+				"type": "Integer"
+			},
+			"Marks": {
+				"type": "Array",
+				"defaultValue": [
+					1,
+					2,
+					3,
+					4
+				]
+			},
+			"output": {
+				"type": "Array"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-08-22T06:12:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

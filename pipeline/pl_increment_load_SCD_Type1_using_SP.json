@@ -1,0 +1,30 @@
+{
+	"name": "pl_increment_load_SCD_Type1_using_SP",
+	"properties": {
+		"activities": [
+			{
+				"name": "sp_SCD_Type1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[MOVEDATA_SCDTYPE1]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_SqlServer",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-15T16:33:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
